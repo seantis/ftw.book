@@ -2,8 +2,35 @@ Changelog
 =========
 
 
-2.1 (unreleased)
+2.1.1 (unreleased)
+------------------
+
+- Add new content-type: Remark. Used to add comments in a chapter of a book
+  [eschmutz]
+
+
+2.1 (2012-04-02)
 ----------------
+
+- Added a alternative default book view based on ftw.tabbedview
+  [mathias.leimgruber]
+
+- Added ftw.tabbedview based overview.
+  [mathias.leimgruber]
+
+
+2.0.2 (2012-03-22)
+------------------
+
+- Fix view_methods of Book FTI (should include default view).
+  [jone]
+
+
+2.0.1 (2012-03-22)
+------------------
+
+- Fix heading counters: count objects where the user has no View permission.
+  [jone]
 
 - Reset heading counters for getting consistent heading numbers on partical exports. #6
   [jone]
