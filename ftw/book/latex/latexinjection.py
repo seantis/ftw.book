@@ -9,6 +9,10 @@ from zope.component import adapts
 from zope.interface import Interface
 
 
+class LaTeXInjectionController(object):
+    adapts()
+
+
 class InjectionLaTeXViewBase(MakoLaTeXView):
 
     def get_rendered_latex_for(self, fieldname):

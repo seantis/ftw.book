@@ -1,9 +1,14 @@
 from ftw.book.interfaces import ILaTeXCodeInjectionEnabled
+from ftw.book.interfaces import ILaTeXInjectionController
 from ftw.book.interfaces import IWithinBookLayer
 from ftw.book.testing import LATEX_ZCML_LAYER
+from ftw.pdfgenerator.interfaces import ILaTeXLayout
 from ftw.pdfgenerator.layout.baselayout import BaseLayout
 from plone.mocktestcase import MockTestCase
+from zope.component import getAdapter
+from zope.component import queryAdapter
 from zope.interface import directlyProvides
+from zope.interface.verify import verifyClass
 
 
 class TestInjectionAwareConvertObject(MockTestCase):
@@ -72,3 +77,41 @@ class TestInjectionAwareConvertObject(MockTestCase):
         latex = self.layout.render_latex_for(obj)
 
         self.assertEqual(latex.strip(), '')
+
+
+class TestLaTeXInjectionController(MockTestCase):
+
+    def setUp(self):
+        super(TestLaTeXInjectionController, self).setUp()
+
+        context = self.create_dummy()
+        request = self.create_dummy()
+        directlyProvides(request, IWithinBookLayer)
+        builder = self.create_dummy()
+
+        self.layout = BaseLayout(context, request, builder)
+
+    def test_component_is_registered(self):
+        self.replay()
+        component = queryAdapter(self.layout, ILaTeXInjectionController)
+
+        self.assertNotEquals(component, None)
+        verifyClass(ILaTeXInjectionController, type(component))
+
+    def test_columns_defaults_to_onecolumn(self):
+        self.replay()
+        controller = getAdapter(self.layout, ILaTeXInjectionController)
+        self.assertFalse(controller.is_twocolumn_layout())
+
+    def test_columns_layout_switching_is_persistent(self):
+        self.replay()
+
+        controller = getAdapter(self.layout, ILaTeXInjectionController)
+        self.assertFalse(controller.is_twocolumn_layout())
+        controller.use_twocolumns()
+        self.assertTrue(controller.is_twocolumn_layout())
+
+        controller = getAdapter(self.layout, ILaTeXInjectionController)
+        self.assertTrue(controller.is_twocolumn_layout())
+        controller.use_onecolumn()
+        self.assertFalse(controller.is_twocolumn_layout())
